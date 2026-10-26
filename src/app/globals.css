@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: var(--font-display), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-body), "Inter", system-ui, sans-serif;
+
+  --color-ink: #10201b;
+  --color-pine-950: #061f17;
+  --color-pine-900: #0a2e22;
+  --color-pine-800: #0e3d2d;
+  --color-pine-700: #145240;
+  --color-pine-600: #1b6a52;
+  --color-pine-100: #dcebe4;
+  --color-pine-50: #eef5f1;
+  --color-gold-700: #8a6a22;
+  --color-gold-600: #a37f30;
+  --color-gold-500: #b8913a;
+  --color-gold-300: #dcc48d;
+  --color-gold-100: #f4ead2;
+  --color-ivory: #fbf8f1;
+  --color-sand: #f2ebdc;
+  --color-stone: #6b7a74;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--color-ivory); color: var(--color-ink); }
+  ::selection { background: var(--color-gold-300); color: var(--color-pine-950); }
+  :focus-visible { outline: 2px solid var(--color-gold-500); outline-offset: 2px; }
+}
+
+@utility container-page { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition disabled:opacity-50; }
+@utility btn-primary { @apply btn bg-pine-800 text-ivory hover:bg-pine-700; }
+@utility btn-gold { @apply btn bg-gold-500 text-pine-950 hover:bg-gold-300; }
+@utility btn-outline { @apply btn border border-pine-800/25 text-pine-800 hover:border-pine-800 hover:bg-pine-50; }
+@utility btn-ghost { @apply btn text-pine-800 hover:bg-pine-50; }
+@utility btn-danger { @apply btn border border-red-700/30 text-red-800 hover:bg-red-50; }
+@utility btn-sm { @apply px-3.5 py-1.5 text-xs; }
+
+@utility label { @apply mb-1 block text-sm font-medium text-ink; }
+@utility hint { @apply mt-1 text-xs text-stone; }
+@utility input { @apply block w-full rounded-lg border border-pine-900/15 bg-white px-3 py-2 text-sm text-ink shadow-sm placeholder:text-stone/70 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-300/50 disabled:bg-sand/40; }
+textarea.input { min-height: 4.5rem; }
+
+@utility card { @apply rounded-2xl border border-pine-900/10 bg-white; }
+@utility eyebrow { @apply text-xs font-semibold uppercase tracking-[0.2em] text-gold-600; }
+
+@utility table {
+  @apply w-full text-left text-sm;
+  & th { @apply border-b border-pine-900/10 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-stone; }
+  & td { @apply border-b border-pine-900/5 px-3 py-2.5 align-top; }
+}
+
+@utility prose-plain { @apply whitespace-pre-line leading-relaxed text-ink/85; }
+
+/* Eight-point star lattice used as a quiet background motif */
+.pattern-stars {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23b8913a' stroke-opacity='.22' stroke-width='1'%3E%3Cpath d='M32 10l6.4 15.6L54 32l-15.6 6.4L32 54l-6.4-15.6L10 32l15.6-6.4z'/%3E%3Crect x='19' y='19' width='26' height='26' transform='rotate(45 32 32)'/%3E%3Crect x='19' y='19' width='26' height='26'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+}

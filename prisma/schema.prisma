@@ -1,0 +1,403 @@
+// Naa'ib Associates Limited Travels and Tour Services
+// Single-agency platform: the company is the operator of every product,
+// booking and communication in this database. There is deliberately no
+// vendor / supplier / marketplace model.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Business identity (singleton row, id = "default")
+// Every field that would be an official fact is nullable and starts empty.
+// Nothing here is invented — the administrator fills it in once confirmed.
+// ---------------------------------------------------------------------------
+model BusinessSettings {
+  id                  String   @id @default("default")
+  displayName         String   @default("Naa'ib Associates")
+  legalName           String   @default("Naa'ib Associates Limited Travels and Tour Services")
+  identityConfirmed   Boolean  @default(false)
+  tagline             String?
+  logoUrl             String?
+  registrationNumber  String?
+  licenceDetails      String?
+  addressLine         String?
+  city                String?
+  country             String?
+  phone               String?
+  whatsapp            String?
+  email               String?
+  officeHours         String?
+  receiptFooter       String?
+  // Smallest instalment a customer may pay online (NGN). Null = no minimum
+  // beyond Paystack's own.
+  minOnlineInstalment Decimal? @db.Decimal(14, 2)
+  updatedAt           DateTime @updatedAt
+}
+
+enum AdminRole {
+  OWNER
+  ADMIN
+  STAFF
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         AdminRole @default(STAFF)
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  auditLogs        AuditLog[]
+  priceChanges     PriceChange[]
+  paymentsRecorded Payment[]
+  inquiryNotes     InquiryNote[]
+  bookingNotes     BookingNote[]
+}
+
+// ---------------------------------------------------------------------------
+// Catalogue
+// ---------------------------------------------------------------------------
+enum PackageTier {
+  REGULAR
+  STANDARD
+  VIP
+}
+
+// DRAFT       – hidden from the public site
+// ENQUIRY     – visible with price; "Enquire for Full Details" state
+// COMING_SOON – visible with price; "Registration Details Coming Soon"
+// BOOKABLE    – fully confirmed quotation; booking requests accepted
+// ARCHIVED    – retired; hidden
+enum PackageStatus {
+  DRAFT
+  ENQUIRY
+  COMING_SOON
+  BOOKABLE
+  ARCHIVED
+}
+
+model Package {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  tier        PackageTier
+  status      PackageStatus @default(ENQUIRY)
+  sortOrder   Int           @default(0)
+  tagline     String?
+  description String?
+
+  // Price — stored in whole currency units (NGN has no sub-unit in practice
+  // for package pricing); Decimal keeps it exact.
+  price            Decimal   @db.Decimal(14, 2)
+  currency         String    @default("NGN")
+  pricingBasis     String? // e.g. "Per pilgrim, sharing room" – entered by admin
+  priceValidFrom   DateTime?
+  priceValidUntil  DateTime?
+  priceConfirmedAt DateTime?
+  priceConfirmedBy String?
+
+  // Season & dates
+  season               String? // e.g. "Hajj 1448 AH"
+  departureDate        DateTime?
+  returnDate           DateTime?
+  departureLocation    String?
+  registrationOpens    DateTime?
+  registrationDeadline DateTime?
+  availabilityNote     String?
+  capacity             Int? // only shown when verified
+
+  // Operational details (free text, entered and verified by admin)
+  accommodation     String?
+  flights           String?
+  groundTransport   String?
+  meals             String?
+  visaAssistance    String?
+  paymentSchedule   String?
+  cancellationTerms String?
+
+  includedServices String[] @default([])
+  excludedServices String[] @default([])
+
+  // Keys of fields the administrator has explicitly verified. Only verified
+  // fields are shown to the public as confirmed package information.
+  verifiedFields String[] @default([])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  images       PackageImage[]
+  documents    PackageDocument[]
+  faqs         PackageFaq[]
+  priceChanges PriceChange[]
+  inquiries    Inquiry[]
+  bookings     Booking[]
+}
+
+model PackageImage {
+  id        String   @id @default(cuid())
+  packageId String
+  package   Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model PackageDocument {
+  id        String   @id @default(cuid())
+  packageId String
+  package   Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  title     String
+  url       String
+  createdAt DateTime @default(now())
+}
+
+model PackageFaq {
+  id        String  @id @default(cuid())
+  packageId String
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  question  String
+  answer    String
+  sortOrder Int     @default(0)
+  published Boolean @default(true)
+}
+
+// Immutable price history — prices are never changed silently.
+model PriceChange {
+  id          String     @id @default(cuid())
+  packageId   String
+  package     Package    @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  oldPrice    Decimal?   @db.Decimal(14, 2)
+  newPrice    Decimal    @db.Decimal(14, 2)
+  currency    String
+  reason      String
+  changedById String?
+  changedBy   AdminUser? @relation(fields: [changedById], references: [id])
+  createdAt   DateTime   @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Customers, enquiries, bookings
+// ---------------------------------------------------------------------------
+enum CustomerType {
+  INDIVIDUAL
+  FAMILY
+  GROUP
+  INSTITUTION
+}
+
+model Customer {
+  id               String       @id @default(cuid())
+  type             CustomerType @default(INDIVIDUAL)
+  fullName         String
+  email            String
+  phone            String
+  organisationName String?
+  city             String?
+  notes            String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  inquiries      Inquiry[]
+  bookings       Booking[]
+  communications Communication[]
+
+  @@index([email])
+}
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  IN_PROGRESS
+  CONVERTED
+  CLOSED
+}
+
+model Inquiry {
+  id               String        @id @default(cuid())
+  reference        String        @unique
+  customerId       String
+  customer         Customer      @relation(fields: [customerId], references: [id])
+  packageId        String?
+  package          Package?      @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  inquiryType      CustomerType
+  travellersCount  Int           @default(1)
+  preferredContact String?
+  message          String
+  status           InquiryStatus @default(NEW)
+  consentGiven     Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  notes InquiryNote[]
+}
+
+model InquiryNote {
+  id        String     @id @default(cuid())
+  inquiryId String
+  inquiry   Inquiry    @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  authorId  String?
+  author    AdminUser? @relation(fields: [authorId], references: [id])
+  body      String
+  createdAt DateTime   @default(now())
+}
+
+// A booking starts as a REQUEST. A Hajj place is never promised
+// automatically — staff review and confirm every booking.
+enum BookingStatus {
+  REQUESTED
+  UNDER_REVIEW
+  AWAITING_DEPOSIT
+  CONFIRMED
+  WAITLISTED
+  CANCELLED
+  COMPLETED
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  reference       String        @unique
+  customerId      String
+  customer        Customer      @relation(fields: [customerId], references: [id])
+  packageId       String
+  package         Package       @relation(fields: [packageId], references: [id])
+  status          BookingStatus @default(REQUESTED)
+  travellersCount Int
+
+  // Snapshot of the quotation at time of request, so later price edits
+  // never rewrite what the customer was shown.
+  unitPrice    Decimal  @db.Decimal(14, 2)
+  currency     String
+  pricingBasis String?
+  season       String?
+  // Final agreed amount, set by staff on confirmation.
+  agreedTotal  Decimal? @db.Decimal(14, 2)
+
+  specialRequests String?
+  consentGiven    Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  travellers     Traveller[]
+  payments       Payment[]
+  notes          BookingNote[]
+  onlineAttempts OnlinePaymentAttempt[]
+}
+
+model Traveller {
+  id          String    @id @default(cuid())
+  bookingId   String
+  booking     Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  fullName    String
+  gender      String?
+  dateOfBirth DateTime?
+  nationality String?
+  isLead      Boolean   @default(false)
+}
+
+model BookingNote {
+  id        String     @id @default(cuid())
+  bookingId String
+  booking   Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  authorId  String?
+  author    AdminUser? @relation(fields: [authorId], references: [id])
+  body      String
+  createdAt DateTime   @default(now())
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CASH
+  POS
+  CHEQUE
+  PAYSTACK
+  OTHER
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  receiptNumber     String        @unique
+  bookingId         String
+  booking           Booking       @relation(fields: [bookingId], references: [id])
+  amount            Decimal       @db.Decimal(14, 2)
+  currency          String
+  method            PaymentMethod
+  externalRef       String?
+  // Set for payments made online; unique so a Paystack transaction can
+  // never be recorded twice (callback and webhook may both arrive).
+  paystackReference String?       @unique
+  receivedAt        DateTime
+  note              String?
+  recordedById      String?
+  recordedBy        AdminUser?    @relation(fields: [recordedById], references: [id])
+  voided            Boolean       @default(false)
+  voidReason        String?
+  createdAt         DateTime      @default(now())
+}
+
+// Outbound customer messages (email). Every message is logged here,
+// whether or not an SMTP transport is configured.
+enum CommunicationStatus {
+  QUEUED
+  SENT
+  FAILED
+  LOGGED_ONLY
+}
+
+model Communication {
+  id         String              @id @default(cuid())
+  customerId String?
+  customer   Customer?           @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  toAddress  String
+  subject    String
+  body       String
+  context    String? // e.g. "inquiry:REF" / "booking:REF"
+  status     CommunicationStatus @default(QUEUED)
+  error      String?
+  createdAt  DateTime            @default(now())
+}
+
+model AuditLog {
+  id        String     @id @default(cuid())
+  actorId   String?
+  actor     AdminUser? @relation(fields: [actorId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  createdAt DateTime   @default(now())
+
+  @@index([entity, entityId])
+}
+
+// One row per Paystack checkout started by a customer. The payment is only
+// recorded after the transaction is verified with Paystack server-side.
+enum OnlineAttemptStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model OnlinePaymentAttempt {
+  id             String              @id @default(cuid())
+  reference      String              @unique
+  bookingId      String
+  booking        Booking             @relation(fields: [bookingId], references: [id])
+  amountKobo     BigInt
+  currency       String
+  status         OnlineAttemptStatus @default(PENDING)
+  gatewayMessage String?
+  paymentId      String?             @unique
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+}
