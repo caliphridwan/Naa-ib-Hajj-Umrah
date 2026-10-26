@@ -98,11 +98,33 @@ textarea.input { min-height: 4.5rem; }
   to { transform: scaleX(1); }
 }
 
-/* Hero entrance: add .hero-in and set --d for the stagger delay */
+/* Hero entrance: add .hero-in and set --d for the stagger delay.
+   With JS, it waits for html.ready (fonts loaded, page painted) so visitors
+   actually see it instead of it finishing while the page is still loading. */
 .hero-in {
-  animation: fade-up 0.9s var(--ease-out) both;
-  animation-delay: var(--d, 0ms);
+  animation: fade-up 1.1s var(--ease-out) both;
+  animation-delay: calc(var(--d, 0ms) + 100ms);
 }
+.js:not(.ready) .hero-in { animation: none; opacity: 0; }
+
+/* Slow cinematic zoom on hero backgrounds */
+@keyframes ken-burns {
+  from { transform: scale(1.02) translate3d(0, 0, 0); }
+  to { transform: scale(1.14) translate3d(-1.5%, -1%, 0); }
+}
+.ken-burns { animation: ken-burns 28s ease-in-out infinite alternate; transform-origin: 60% 50%; will-change: transform; }
+
+/* Illustration details */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+.twinkle { animation: twinkle 3.2s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes moon-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgb(220 196 141 / 0.35)); }
+  50% { filter: drop-shadow(0 0 14px rgb(220 196 141 / 0.8)); }
+}
+.moon-glow { animation: moon-glow 6s ease-in-out infinite; }
 
 /* Slowly drifting star lattice */
 .pattern-drift { animation: drift 60s linear infinite; }
@@ -128,6 +150,7 @@ textarea.input { min-height: 4.5rem; }
   transform-origin: left;
   animation: rule-in 1.2s var(--ease-out) 0.2s both;
 }
+.js:not(.ready) .rule-draw { animation: none; transform: scaleX(0); }
 
 /* Scroll reveal. Only hidden when JS is running (html.js), so content is
    never lost if scripts fail. --d staggers siblings. */
@@ -173,5 +196,7 @@ a:hover .logo-star { transform: rotate(90deg); }
     transition-delay: 0ms !important;
   }
   .js [data-reveal] { opacity: 1; }
-  .pattern-drift, .hero-glow { animation: none; }
+  .pattern-drift, .hero-glow, .ken-burns, .twinkle, .moon-glow { animation: none; }
+  .hero-in, .rule-draw, .js [data-reveal].is-visible, .bar-fill { animation: none !important; }
+  .js:not(.ready) .hero-in, .js:not(.ready) .rule-draw { opacity: 1; transform: none; }
 }

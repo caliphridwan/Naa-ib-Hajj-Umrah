@@ -6,6 +6,23 @@ import { usePathname } from "next/navigation";
 /** Fades in every [data-reveal] element as it scrolls into view. Re-scans on navigation. */
 export function Reveal() {
   const pathname = usePathname();
+
+  // Start the hero entrance once fonts are ready and the page has painted
+  // (capped at 1.2s so slow font loading never delays it for long).
+  useEffect(() => {
+    const root = document.documentElement;
+    if (root.classList.contains("ready")) return;
+    let done = false;
+    const go = () => {
+      if (done) return;
+      done = true;
+      requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add("ready")));
+    };
+    const timer = setTimeout(go, 1200);
+    document.fonts?.ready.then(go, go);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     const els = document.querySelectorAll<HTMLElement>("[data-reveal]:not(.is-visible)");
     if (!("IntersectionObserver" in window)) {

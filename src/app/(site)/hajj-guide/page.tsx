@@ -21,8 +21,10 @@ export default function HajjGuidePage() {
   return (
     <>
       <section className="relative isolate overflow-hidden bg-pine-950 text-ivory">
-        <HolyImage slot="guide" priority showCredit={false} className="absolute inset-0 -z-20 h-full w-full" />
+        <HolyImage slot="guide" priority showCredit={false} className="absolute inset-0 -z-20 h-full w-full" imgClassName="ken-burns" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-pine-950 via-pine-950/85 to-pine-950/30" aria-hidden />
+        <div className="pattern-stars pattern-drift absolute inset-0 -z-10 opacity-40" aria-hidden />
+        <div className="hero-glow -z-10 -left-40 top-1/4" aria-hidden />
         <div className="container-page py-24 sm:py-32">
           <span className="rule-draw mb-5" aria-hidden />
           <p className="eyebrow hero-in text-gold-300">Hajj Guide</p>

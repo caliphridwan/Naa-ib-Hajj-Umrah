@@ -35,10 +35,11 @@ export default async function HomePage() {
     <>
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-pine-950 text-ivory">
-        <HolyImage slot="hero" priority showCredit={false} className="absolute inset-0 -z-20 h-full w-full" imgClassName="scale-105" />
+        <HolyImage slot="hero" priority showCredit={false} className="absolute inset-0 -z-20 h-full w-full" imgClassName="ken-burns" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-pine-950 via-pine-950/85 to-pine-950/20" aria-hidden />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-pine-950 via-transparent to-transparent" aria-hidden />
-        <div className="pattern-stars pattern-drift absolute inset-0 -z-10 opacity-30" aria-hidden />
+        <div className="pattern-stars pattern-drift absolute inset-0 -z-10 opacity-50" aria-hidden />
+        <div className="hero-glow -z-10 -left-40 top-1/3" aria-hidden />
         <div className="container-page relative flex min-h-[88vh] flex-col justify-center py-24 sm:py-32">
           <span className="rule-draw mb-5" aria-hidden />
           <p className="eyebrow hero-in text-gold-300">{s.legalName}</p>

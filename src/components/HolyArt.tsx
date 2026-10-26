@@ -27,9 +27,17 @@ function Sky({ id }: { id: string }) {
       <rect width="800" height="500" fill={`url(#${id}-stars)`} />
       <rect width="800" height="500" fill={`url(#${id}-glow)`} />
       {/* crescent */}
-      <path d="M650 92a34 34 0 1 0 22 60 28 28 0 1 1-22-60z" fill="#dcc48d" opacity=".9" />
-      {[[120, 70], [220, 120], [520, 60], [720, 180], [80, 190], [380, 40]].map(([x, y]) => (
-        <circle key={`${x}-${y}`} cx={x} cy={y} r="1.6" fill="#f4ead2" opacity=".8" />
+      <path className="moon-glow" d="M650 92a34 34 0 1 0 22 60 28 28 0 1 1-22-60z" fill="#dcc48d" opacity=".9" />
+      {[[120, 70], [220, 120], [520, 60], [720, 180], [80, 190], [380, 40], [300, 90], [460, 130], [760, 60], [40, 110]].map(([x, y], i) => (
+        <circle
+          key={`${x}-${y}`}
+          className="twinkle"
+          style={{ "--d": `${(i * 0.7) % 3.2}s` } as React.CSSProperties}
+          cx={x}
+          cy={y}
+          r={i % 3 === 0 ? 2.2 : 1.5}
+          fill="#f4ead2"
+        />
       ))}
     </>
   );

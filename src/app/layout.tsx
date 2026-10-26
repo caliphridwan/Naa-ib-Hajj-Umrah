@@ -23,7 +23,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${display.variable} ${body.variable} ${arabic.variable}`} suppressHydrationWarning>
       <head>
         {/* Enables scroll-reveal styles only when JavaScript runs */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "document.documentElement.classList.add('js');setTimeout(function(){document.documentElement.classList.add('ready')},2500)",
+          }}
+        />
       </head>
       <body className="min-h-screen font-sans antialiased">
         {children}
