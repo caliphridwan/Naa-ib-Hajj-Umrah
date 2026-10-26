@@ -31,7 +31,7 @@
 
 @utility container-page { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
 
-@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition disabled:opacity-50; }
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition duration-300 active:scale-[0.97] disabled:opacity-50; }
 @utility btn-primary { @apply btn bg-pine-800 text-ivory hover:bg-pine-700; }
 @utility btn-gold { @apply btn bg-gold-500 text-pine-950 hover:bg-gold-300; }
 @utility btn-outline { @apply btn border border-pine-800/25 text-pine-800 hover:border-pine-800 hover:bg-pine-50; }
@@ -63,4 +63,111 @@ textarea.input { min-height: 4.5rem; }
 @media print {
   .no-print { display: none !important; }
   body { background: white; }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion — calm, unhurried, and disabled for visitors who prefer reduced motion
+   --------------------------------------------------------------------------- */
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Uses `translate` (not `transform`) so it never fights hover transforms */
+@keyframes fade-up {
+  from { opacity: 0; translate: 0 22px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes drift {
+  from { background-position: 0 0; }
+  to { background-position: 64px 128px; }
+}
+@keyframes glow {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.08); }
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes rule-in {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Hero entrance: add .hero-in and set --d for the stagger delay */
+.hero-in {
+  animation: fade-up 0.9s var(--ease-out) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* Slowly drifting star lattice */
+.pattern-drift { animation: drift 60s linear infinite; }
+
+/* Soft breathing gold light behind hero content */
+.hero-glow {
+  position: absolute;
+  width: 42rem;
+  height: 42rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(184 145 58 / 0.28), transparent 65%);
+  filter: blur(10px);
+  animation: glow 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Gold hairline that draws itself under hero eyebrows */
+.rule-draw {
+  display: block;
+  height: 1px;
+  width: 4rem;
+  background: var(--color-gold-500);
+  transform-origin: left;
+  animation: rule-in 1.2s var(--ease-out) 0.2s both;
+}
+
+/* Scroll reveal. Only hidden when JS is running (html.js), so content is
+   never lost if scripts fail. --d staggers siblings. */
+.js [data-reveal] { opacity: 0; }
+.js [data-reveal].is-visible { animation: fade-up 0.9s var(--ease-out) var(--d, 0ms) both; }
+
+/* Gentle hover lift for cards */
+.lift {
+  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out), border-color 0.3s;
+}
+.lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px -24px rgb(6 31 23 / 0.35);
+}
+
+/* Gold sheen that sweeps across on hover (VIP) */
+.sheen { position: relative; overflow: hidden; }
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: -50% auto -50% -60%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgb(220 196 141 / 0.22), transparent);
+  transform: translateX(0) rotate(8deg);
+  transition: transform 1.2s var(--ease-out);
+  pointer-events: none;
+}
+.sheen:hover::after { transform: translateX(450%) rotate(8deg); }
+
+/* Logo star turns slowly on hover */
+.logo-star { transition: transform 1.4s var(--ease-out); }
+a:hover .logo-star { transform: rotate(90deg); }
+
+/* Progress bars fill in */
+.bar-fill { transform-origin: left; animation: grow-x 1.4s var(--ease-out) 0.2s both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .js [data-reveal] { opacity: 1; }
+  .pattern-drift, .hero-glow { animation: none; }
 }

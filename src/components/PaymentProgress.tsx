@@ -33,7 +33,7 @@ export function PaymentProgress({ summary: s, currency }: { summary: PaymentSumm
         aria-valuenow={pct}
         aria-label="Percentage of booking paid"
       >
-        <div className="h-full rounded-full bg-pine-700 transition-all" style={{ width: `${pct}%` }} />
+        <div className="bar-fill h-full rounded-full bg-gradient-to-r from-pine-700 to-pine-600" style={{ width: `${pct}%` }} />
       </div>
       <dl className="mt-4 grid grid-cols-3 gap-3 text-sm">
         <div><dt className="text-stone">Total</dt><dd className="font-medium">{formatMoney(s.total, currency)}</dd></div>

@@ -6,7 +6,7 @@ const STEPS = [
 ];
 
 /** "How booking & payment works" — optionally highlights the customer's current step (1–4). */
-export function PaymentSteps({ current, dark = false }: { current?: number; dark?: boolean }) {
+export function PaymentSteps({ current, dark = false, reveal = false }: { current?: number; dark?: boolean; reveal?: boolean }) {
   return (
     <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {STEPS.map((s, i) => {
@@ -16,7 +16,9 @@ export function PaymentSteps({ current, dark = false }: { current?: number; dark
         return (
           <li
             key={s.title}
-            className={`rounded-2xl border p-4 ${
+            data-reveal={reveal || undefined}
+            style={{ "--d": `${i * 110}ms` } as React.CSSProperties}
+            className={`lift rounded-2xl border p-4 ${
               active ? "border-pine-700 bg-pine-50" : dark ? "border-ivory/15 bg-ivory/5" : "border-pine-900/10 bg-white"
             }`}
           >

@@ -18,8 +18,8 @@ export default function WhoWeServePage() {
         Our team will confirm which services we can provide for your circumstances when you enquire.
       </p>
       <div className="mt-10 grid gap-6 sm:grid-cols-2">
-        {SEGMENTS.map((s) => (
-          <div key={s.type} className="card flex flex-col p-7">
+        {SEGMENTS.map((s, i) => (
+          <div key={s.type} className="card lift flex flex-col p-7" data-reveal style={{ "--d": `${i * 100}ms` } as React.CSSProperties}>
             <h2 className="font-serif text-2xl font-semibold text-pine-900">{s.title}</h2>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/75">{s.body}</p>
             <Link href={`/enquire?type=${s.type}`} className="btn-outline mt-5 self-start">Enquire</Link>

@@ -30,18 +30,20 @@ export default async function HomePage() {
   return (
     <>
       <section className="relative overflow-hidden bg-pine-950 text-ivory">
-        <div className="pattern-stars absolute inset-0 opacity-60" aria-hidden />
+        <div className="pattern-stars pattern-drift absolute inset-0 opacity-60" aria-hidden />
+        <div className="hero-glow -right-40 -top-40" aria-hidden />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-pine-950/40 to-pine-950" aria-hidden />
         <div className="container-page relative py-24 sm:py-32">
-          <p className="eyebrow text-gold-300">{s.legalName}</p>
-          <h1 className="mt-5 max-w-3xl font-serif text-5xl font-semibold leading-[1.05] sm:text-6xl">
+          <span className="rule-draw mb-5" aria-hidden />
+          <p className="eyebrow hero-in text-gold-300">{s.legalName}</p>
+          <h1 className="hero-in mt-5 max-w-3xl font-serif text-5xl font-semibold leading-[1.05] sm:text-6xl" style={{ "--d": "120ms" } as React.CSSProperties}>
             Answer the call with a team you can trust.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-ivory/75">
+          <p className="hero-in mt-6 max-w-2xl text-lg text-ivory/75" style={{ "--d": "260ms" } as React.CSSProperties}>
             {s.tagline ??
               `Hajj packages planned, priced and managed directly by ${s.displayName} — with clear information, honest pricing and attentive service from first enquiry to safe return.`}
           </p>
-          <div className="mt-10 flex flex-wrap gap-3">
+          <div className="hero-in mt-10 flex flex-wrap gap-3" style={{ "--d": "400ms" } as React.CSSProperties}>
             <Link href="/packages" className="btn-gold">Book Your Hajj</Link>
             <Link href="/enquire" className="btn border border-ivory/30 text-ivory hover:bg-ivory/10">Speak with Our Team</Link>
           </div>
@@ -49,7 +51,7 @@ export default async function HomePage() {
       </section>
 
       <section className="container-page -mt-px py-20">
-        <div className="max-w-2xl">
+        <div className="max-w-2xl" data-reveal>
           <p className="eyebrow">Hajj Packages</p>
           <h2 className="mt-3 font-serif text-4xl font-semibold text-pine-900">Choose the package that suits your journey</h2>
           <p className="mt-3 text-ink/70">
@@ -58,8 +60,8 @@ export default async function HomePage() {
           </p>
         </div>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {packages.map((p) => (
-            <PackageCard key={p.id} pkg={p} />
+          {packages.map((p, i) => (
+            <PackageCard key={p.id} pkg={p} delay={i * 120} />
           ))}
         </div>
         {packages.length === 0 && <p className="mt-10 text-ink/70">Packages will be published shortly.</p>}
@@ -67,7 +69,7 @@ export default async function HomePage() {
       </section>
 
       <section className="container-page pb-20">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4" data-reveal>
           <div>
             <p className="eyebrow">Booking &amp; payment</p>
             <h2 className="mt-3 font-serif text-4xl font-semibold text-pine-900">Book now, pay in instalments</h2>
@@ -75,18 +77,18 @@ export default async function HomePage() {
           </div>
           <Link href="/pay" className="btn-gold">Make a Payment</Link>
         </div>
-        <PaymentSteps />
+        <PaymentSteps reveal />
       </section>
 
       <section className="bg-sand/60">
         <div className="container-page grid gap-10 py-20 md:grid-cols-[1fr_2fr]">
-          <div>
+          <div data-reveal>
             <p className="eyebrow">Our commitment</p>
             <h2 className="mt-3 font-serif text-4xl font-semibold text-pine-900">Trust is part of the journey</h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-2">
-            {PRINCIPLES.map((p) => (
-              <div key={p.title} className="card p-6">
+            {PRINCIPLES.map((p, i) => (
+              <div key={p.title} className="card lift p-6" data-reveal style={{ "--d": `${i * 100}ms` } as React.CSSProperties}>
                 <h3 className="font-serif text-xl font-semibold text-pine-900">{p.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink/75">{p.body}</p>
               </div>
@@ -96,15 +98,16 @@ export default async function HomePage() {
       </section>
 
       <section className="container-page py-20">
-        <div className="grid items-center gap-10 rounded-3xl bg-pine-900 p-10 text-ivory md:grid-cols-[2fr_1fr] md:p-14">
-          <div>
+        <div className="sheen relative grid items-center gap-10 overflow-hidden rounded-3xl bg-pine-900 p-10 text-ivory md:grid-cols-[2fr_1fr] md:p-14" data-reveal>
+          <div className="pattern-stars pattern-drift absolute inset-0 opacity-25" aria-hidden />
+          <div className="relative">
             <p className="eyebrow text-gold-300">Families, groups &amp; institutions</p>
             <h2 className="mt-3 font-serif text-3xl font-semibold sm:text-4xl">Travelling together?</h2>
             <p className="mt-3 text-ivory/75">
               Tell us about your family, group or organisation and our team will respond with the options we can offer.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3 md:justify-end">
+          <div className="relative flex flex-wrap gap-3 md:justify-end">
             <Link href="/enquire?type=GROUP" className="btn-gold">Group Enquiry</Link>
             <Link href="/who-we-serve" className="btn border border-ivory/30 text-ivory hover:bg-ivory/10">Learn more</Link>
           </div>

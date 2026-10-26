@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="border-t border-pine-900/10 py-7">
+    <section className="border-t border-pine-900/10 py-7" data-reveal>
       <h2 className="font-serif text-2xl font-semibold text-pine-900">{title}</h2>
       <div className="mt-3">{children}</div>
     </section>
@@ -45,15 +45,16 @@ export default async function PackagePage({ params }: Props) {
   return (
     <>
       <section className={`relative overflow-hidden ${vip ? "bg-pine-950 text-ivory" : "bg-pine-900 text-ivory"}`}>
-        <div className={`pattern-stars absolute inset-0 ${vip ? "opacity-70" : "opacity-40"}`} aria-hidden />
+        <div className={`pattern-stars pattern-drift absolute inset-0 ${vip ? "opacity-70" : "opacity-40"}`} aria-hidden />
+        <div className="hero-glow -left-60 -bottom-72" aria-hidden />
         <div className="container-page relative grid gap-10 py-16 md:grid-cols-[3fr_2fr] md:py-20">
           <div>
             <Link href="/packages" className="text-sm text-ivory/60 hover:text-ivory">← All packages</Link>
-            <p className="eyebrow mt-6 text-gold-300">{TIER_LABEL[pkg.tier]} Hajj{v("season") ? ` · ${pkg.season}` : ""}</p>
-            <h1 className="mt-3 font-serif text-5xl font-semibold sm:text-6xl">{pkg.name}</h1>
+            <p className="eyebrow hero-in mt-6 text-gold-300">{TIER_LABEL[pkg.tier]} Hajj{v("season") ? ` · ${pkg.season}` : ""}</p>
+            <h1 className="hero-in mt-3 font-serif text-5xl font-semibold sm:text-6xl" style={{ "--d": "120ms" } as React.CSSProperties}>{pkg.name}</h1>
             {pkg.tagline && <p className="mt-4 max-w-xl text-lg text-ivory/75">{pkg.tagline}</p>}
           </div>
-          <div className={`rounded-3xl p-7 ${vip ? "border border-gold-500/40 bg-pine-900/60" : "bg-ivory text-ink"}`}>
+          <div className={`hero-in rounded-3xl p-7 ${vip ? "sheen border border-gold-500/40 bg-pine-900/60" : "bg-ivory text-ink"}`} style={{ "--d": "260ms" } as React.CSSProperties}>
             <p className={`text-xs uppercase tracking-wider ${vip ? "text-ivory/60" : "text-stone"}`}>Starting price</p>
             <p className="mt-1 font-serif text-5xl font-semibold">{formatMoney(pkg.price, pkg.currency)}</p>
             <p className={`mt-1 text-sm ${vip ? "text-ivory/70" : "text-ink/70"}`}>
@@ -93,7 +94,7 @@ export default async function PackagePage({ params }: Props) {
               <Link href="/pay" className="btn-gold">Already booked? Make a Payment</Link>
             </div>
           </div>
-          <PaymentSteps />
+          <PaymentSteps reveal />
         </div>
       </section>
 
@@ -201,7 +202,7 @@ export default async function PackagePage({ params }: Props) {
           )}
         </div>
 
-        <aside className="space-y-6">
+        <aside className="space-y-6" data-reveal style={{ "--d": "150ms" } as React.CSSProperties}>
           {pending.length > 0 && (
             <div className="card p-6">
               <h2 className="font-serif text-xl font-semibold text-pine-900">Details being confirmed</h2>

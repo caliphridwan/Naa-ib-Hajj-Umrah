@@ -37,7 +37,7 @@ const TIER_STYLE = {
   },
 } as const;
 
-export function PackageCard({ pkg }: { pkg: Package }) {
+export function PackageCard({ pkg, delay = 0 }: { pkg: Package; delay?: number }) {
   const t = TIER_STYLE[pkg.tier];
   const facts: [string, string][] = [];
   if (isVerified(pkg, "season")) facts.push(["Season", pkg.season!]);
@@ -46,8 +46,12 @@ export function PackageCard({ pkg }: { pkg: Package }) {
   if (isVerified(pkg, "registration")) facts.push(["Register by", formatDate(pkg.registrationDeadline)]);
 
   return (
-    <article className={`relative flex flex-col overflow-hidden rounded-3xl p-7 ${t.card}`}>
-      {pkg.tier === "VIP" && <div className="pattern-stars pointer-events-none absolute inset-0 opacity-40" aria-hidden />}
+    <article
+      className={`lift relative flex flex-col overflow-hidden rounded-3xl p-7 ${pkg.tier === "VIP" ? "sheen" : ""} ${t.card}`}
+      data-reveal
+      style={{ "--d": `${delay}ms` } as React.CSSProperties}
+    >
+      {pkg.tier === "VIP" && <div className="pattern-stars pattern-drift pointer-events-none absolute inset-0 opacity-40" aria-hidden />}
       <div className="relative flex flex-1 flex-col">
         <div className="flex items-start justify-between gap-3">
           <p className={`eyebrow ${t.eyebrow}`}>{TIER_LABEL[pkg.tier]} Hajj</p>
