@@ -18,6 +18,7 @@ export function SiteFooter({ settings: s }: { settings: BusinessSettings }) {
             <p className="eyebrow text-gold-300">Explore</p>
             <ul className="mt-3 space-y-2">
               <li><Link href="/packages" className="hover:text-gold-300">Hajj Packages</Link></li>
+              <li><Link href="/hajj-guide" className="hover:text-gold-300">Hajj Guide</Link></li>
               <li><Link href="/who-we-serve" className="hover:text-gold-300">Individuals, Families &amp; Groups</Link></li>
               <li><Link href="/pay" className="hover:text-gold-300">Make a Payment</Link></li>
               <li><Link href="/booking-status" className="hover:text-gold-300">Track an Enquiry or Booking</Link></li>
