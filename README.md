@@ -85,6 +85,12 @@ Offline payments (bank transfer, cash, POS, cheque) are still recorded by staff 
 - The company absorbs Paystack's transaction fee: the customer is charged exactly the amount they choose.
 - Refunds are made in the Paystack dashboard. Then void the receipt here (Owner only), giving the refund as the reason.
 
+## Content & photos
+
+- **Home page:** hero, packages, the Two Holy Cities (Makkah & Madinah), the days of Hajj, booking steps, preparation, gallery, FAQs.
+- **Hajj Guide** (`/hajj-guide`): pillars, day-by-day journey, types of Hajj (Tamattu', Qiran, Ifrad), preparation, FAQs. Text lives in `src/lib/content.ts`.
+- **Admin → Site photos:** upload licensed photos for the home banner, Makkah, Madinah, the guide banner and a 6-photo gallery. Until a photo is uploaded, an illustration of the Kaaba or the Green Dome is shown. A credit field shows attribution on the photo when a licence requires it.
+
 ## Operational notes
 
 - **Email:** set `SMTP_*` to send email. Without it, every customer message is still recorded under *Communications* as "Logged only", and the admin page warns that messages are not being delivered.

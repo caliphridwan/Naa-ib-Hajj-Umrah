@@ -3,6 +3,7 @@
 @theme {
   --font-serif: var(--font-display), "Cormorant Garamond", Georgia, serif;
   --font-sans: var(--font-body), "Inter", system-ui, sans-serif;
+  --font-arabic: var(--font-arabic), "Amiri", "Noto Naskh Arabic", serif;
 
   --color-ink: #10201b;
   --color-pine-950: #061f17;
@@ -54,6 +55,9 @@ textarea.input { min-height: 4.5rem; }
 }
 
 @utility prose-plain { @apply whitespace-pre-line leading-relaxed text-ink/85; }
+
+/* Honorifics and Arabic text */
+.saw { font-family: var(--font-arabic), "Amiri", "Noto Naskh Arabic", serif; font-weight: 400; }
 
 /* Eight-point star lattice used as a quiet background motif */
 .pattern-stars {

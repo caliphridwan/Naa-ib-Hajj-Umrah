@@ -15,6 +15,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     { href: "/admin/bookings", label: "Bookings" },
     { href: "/admin/customers", label: "Customers" },
     { href: "/admin/communications", label: "Communications" },
+    ...(hasRole(me, "ADMIN") ? [{ href: "/admin/site-photos", label: "Site photos" }] : []),
     ...(hasRole(me, "ADMIN") ? [{ href: "/admin/audit", label: "Audit log" }] : []),
     ...(hasRole(me, "OWNER") ? [{ href: "/admin/settings", label: "Business settings" }, { href: "/admin/users", label: "Staff accounts" }] : []),
   ];

@@ -401,3 +401,14 @@ model OnlinePaymentAttempt {
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
 }
+
+// Photographs used across the public site (hero, Makkah, Madinah, gallery).
+// Uploaded by staff; only images the company has the right to use.
+model SitePhoto {
+  slot      String   @id // e.g. "hero", "makkah", "madinah", "gallery-1"
+  url       String
+  alt       String
+  credit    String? // attribution shown under the photo, if the licence requires it
+  creditUrl String?
+  updatedAt DateTime @updatedAt
+}
